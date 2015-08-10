@@ -73,7 +73,6 @@ impl Map {
             elem::Type::Road => return true,
             elem::Type::FullHouse(_) => return false,
             elem::Type::House(_) if car.cubes.is_empty() => return false,
-            elem::Type::House(c) if c != car.color => return false, // may be redundant
             elem::Type::House(c) => {
                 if let Some(&elem::Type::Cube(cc)) = car.cubes.last() {
                     if cc != c {
@@ -87,7 +86,7 @@ impl Map {
                 }
                 return false;
             },
-            elem::Type::Cube(c) if c == car.color && car.cubes.len() < 3 => {
+            elem::Type::Cube(c) if (c == car.color || car.color == elem::Color::White) && car.cubes.len() < 3 => {
                 // Steal the cube
                 car.cubes.push(self[car.coord].typ);
                 self[car.coord].typ = elem::Type::Road;

@@ -184,6 +184,19 @@ fn main() {
             cars: vec![
                 elem::Car::new(4, 9, elem::Color::Red),
             ],
+        },
+        Scenario {
+            map: "\
+            R--x--Y--x--B--x--x--x--x--x--x\n\
+            .                             |\n\
+            .                             x\n\
+            .                             |\n\
+            x--x--x--r--x--y--x--b--x--x--x\
+            ",
+            cars: vec![
+                elem::Car::new(0, 2, elem::Color::White),
+            ],
+        },
     ];
 
     for scenario in scenarii {
