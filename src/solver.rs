@@ -92,7 +92,6 @@ impl Solver {
             }
         }
 
-        state.from = moves.to_vec();
         self.states.push(state);
         true
     }
