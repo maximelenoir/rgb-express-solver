@@ -1,0 +1,4 @@
+[package]
+name = "rgb-express-solver"
+version = "0.1.0"
+authors = ["Maxime Lenoir <lenoir.maxime0@gmail.com>"]
