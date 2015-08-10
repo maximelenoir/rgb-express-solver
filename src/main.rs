@@ -159,6 +159,31 @@ fn main() {
                 elem::Car::new(0, 2, elem::Color::Yellow),
             ],
         },
+        Scenario {
+            map: "\
+            x--x--x--x--x--x--x--x\n\
+            |           |        |\n\
+            x           x        x\n\
+            |           |        |\n\
+            x--R--x--x--r--x--R--x\n\
+            |     |     |        |\n\
+            x     x     x        x\n\
+            |     |     |        |\n\
+            x     x     x--x--R--x\n\
+            |     |     |        |\n\
+            r--x--r     r        x\n\
+            |     |     |        |\n\
+            x     x     x--x--R--x\n\
+            |     |     |        |\n\
+            x     x     x        x\n\
+            |     |     |        |\n\
+            x--x--x--x--x--x--x--x\n\
+            .           |         \n\
+            .           x         \
+            ",
+            cars: vec![
+                elem::Car::new(4, 9, elem::Color::Red),
+            ],
     ];
 
     for scenario in scenarii {
