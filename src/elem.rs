@@ -8,6 +8,10 @@ pub enum Color {
     Blue,
     Yellow,
     White,
+    Orange,
+    Violet,
+    Pink,
+    Cream,
 }
 
 impl Color {
@@ -18,7 +22,26 @@ impl Color {
            Color::Blue    => "\x1b[38;5;4m",
            Color::Yellow  => "\x1b[38;5;11m",
            Color::White   => "\x1b[38;5;234m",
+           Color::Orange  => "\x1b[38;5;202m",
+           Color::Violet  => "\x1b[38;5;5m",
+           Color::Pink    => "\x1b[38;5;207m",
+           Color::Cream   => "\x1b[38;5;223m",
         }, s)
+    }
+
+    pub fn from_char(c: char) -> Option<Color> {
+        match c {
+            'r' => Some(Color::Red),
+            'g' => Some(Color::Green),
+            'b' => Some(Color::Blue),
+            'y' => Some(Color::Yellow),
+            'w' => Some(Color::White),
+            'o' => Some(Color::Orange),
+            'v' => Some(Color::Violet),
+            'p' => Some(Color::Pink),
+            'c' => Some(Color::Cream),
+            _   => None,
+        }
     }
 }
 
@@ -26,6 +49,10 @@ impl Color {
 pub enum Type {
     Empty,
     Road,
+    PushedButton(Color),
+    ArmedButton(Color),
+    OpenBridge(Color),
+    ClosedBridge(Color),
     Cube(Color),
     House(Color),
     FullHouse(Color),
@@ -71,7 +98,7 @@ pub struct Elem {
 }
 
 impl Elem {
-    pub fn from_char(c: char) -> Elem {
+    pub fn from_char(c: char, x: char) -> Elem {
         Elem {
             conn: [false; 4],
             typ: match c {
@@ -84,6 +111,10 @@ impl Elem {
                 'B' => Type::House(Color::Blue),
                 'y' => Type::Cube(Color::Yellow),
                 'Y' => Type::House(Color::Yellow),
+                'v' => Type::PushedButton(Color::from_char(x).unwrap()),
+                '^' => Type::ArmedButton(Color::from_char(x).unwrap()),
+                '~' => Type::OpenBridge(Color::from_char(x).unwrap()),
+                '#' => Type::ClosedBridge(Color::from_char(x).unwrap()),
                 _   => Type::Empty,
             },
             occupied: false,
@@ -103,11 +134,15 @@ impl Elem {
 impl fmt::Display for Elem {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> result::Result<(), fmt::Error> {
         write!(fmt, "{}", match self.typ {
-           Type::Empty        => " ".to_string(),
-           Type::Road         => "x".to_string(),
-           Type::Cube(c)      => c.colorize("📦"),
-           Type::House(c)     => c.colorize("🏫"),
-           Type::FullHouse(c) => c.colorize("🏫"),
+            Type::Empty           => " ".to_string(),
+            Type::Road            => "x".to_string(),
+            Type::PushedButton(c) => c.colorize("🔳"),
+            Type::ArmedButton(c)  => c.colorize("🔲"),
+            Type::OpenBridge(c)   => c.colorize("≋"),
+            Type::ClosedBridge(c) => c.colorize("⌒"),
+            Type::Cube(c)         => c.colorize("📦"),
+            Type::House(c)        => c.colorize("🏫"),
+            Type::FullHouse(c)    => c.colorize("🏫"),
         })
     }
 }

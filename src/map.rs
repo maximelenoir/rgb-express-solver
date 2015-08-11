@@ -22,11 +22,18 @@ impl Map {
                             .enumerate()
                             .filter(|&(r, _)| { r % 2 == 0 })
                             .map(|(r, row)| { (r / 2, row) }) {
-            for (c, x) in row.chars()
+            let mut row = row.to_string();
+            row.push(' ');
+            let extra_it = row.chars()
+                              .enumerate()
+                              .filter(|&(c, _)| { c % 3 == 1 })
+                              .map(|(_, col)| { col });
+            for ((c, x), extra) in row.chars()
                                .enumerate()
                                .filter(|&(c, _)| { c % 3 == 0 })
-                               .map(|(c, col)| { (c / 3, col) }) {
-                m[(c, r)] = elem::Elem::from_char(x);
+                               .map(|(c, col)| { (c / 3, col) })
+                               .zip(extra_it) {
+                m[(c, r)] = elem::Elem::from_char(x, extra);
             }
         }
         // Connect
@@ -34,7 +41,7 @@ impl Map {
                             .take_while(|row| row.len() > 0)
                             .enumerate() {
             for (c, x) in row.chars().enumerate() {
-                if r % 2 == 0 && c % 3 == 1 && x == '-' {
+                if r % 2 == 0 && c % 3 == 2 && x == '-' {
                     m[(c / 3    , r / 2)].connect(elem::Dir::Right);
                     m[(c / 3 + 1, r / 2)].connect(elem::Dir::Left);
                 } else if r % 2 == 1 && c % 3 == 0 && x == '|' {
@@ -71,6 +78,21 @@ impl Map {
         match self[car.coord].typ {
             elem::Type::Empty => return false, // should not happen
             elem::Type::Road => return true,
+            elem::Type::PushedButton(_) => return true,
+            elem::Type::ArmedButton(c) => {
+                for x in self.iter_mut() {
+                    x.typ = match x.typ {
+                        elem::Type::ArmedButton(cc) if c == cc  =>  elem::Type::PushedButton(c),
+                        elem::Type::PushedButton(cc) if c == cc => elem::Type::ArmedButton(c),
+                        elem::Type::OpenBridge(cc) if c == cc   => elem::Type::ClosedBridge(c),
+                        elem::Type::ClosedBridge(cc) if c == cc => elem::Type::OpenBridge(c),
+                        _ => x.typ,
+                    }
+                }
+                return true;
+            }
+            elem::Type::OpenBridge(_) => return false,
+            elem::Type::ClosedBridge(_) => return true,
             elem::Type::FullHouse(_) => return false,
             elem::Type::House(_) if car.cubes.is_empty() => return false,
             elem::Type::House(c) => {
@@ -94,6 +116,16 @@ impl Map {
             }
             elem::Type::Cube(_) => return false,
         }
+    }
+
+    pub fn check(&self, cars: &Vec<elem::Car>) -> bool {
+        for car in cars {
+            // Check wether a bridge opened AFTER a car moved.
+            if let elem::Type::OpenBridge(_) = self[car.coord].typ {
+                return false;
+            }
+        }
+        return true;
     }
 
     pub fn output_solution(&self, solution: &Vec<Vec<Option<elem::Dir>>>, cars: &Vec<elem::Car>) {

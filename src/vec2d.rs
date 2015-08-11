@@ -23,6 +23,10 @@ impl<T: Default + Clone> Vec2D<T> {
     pub fn iter(&self) -> slice::Iter<T> {
         self.undl.iter()
     }
+
+    pub fn iter_mut(&mut self) -> slice::IterMut<T> {
+        self.undl.iter_mut()
+    }
 }
 
 impl<T: fmt::Debug> fmt::Debug for Vec2D<T> {

@@ -91,6 +91,10 @@ impl Solver {
                 return false;
             }
         }
+        // Check the coherency of the moves
+        if !state.map.check(&state.cars) {
+            return false;
+        }
 
         self.states.push(state);
         true

@@ -197,6 +197,59 @@ fn main() {
                 elem::Car::new(0, 2, elem::Color::White),
             ],
         },
+        Scenario {
+            map: "\
+            .        x--x--~v-x--x         \n\
+            .        |           |         \n\
+            x--r--^v-x--x--#v-x--x--x--x--R\
+            ",
+            cars: vec![
+                elem::Car::new(0, 1, elem::Color::Red),
+            ],
+        },
+        Scenario {
+            map: "\
+            .           R            \n\
+            .           |            \n\
+            .           x            \n\
+            .           |            \n\
+            .           ~v           \n\
+            .           |            \n\
+            x--x--x--x--x--x--x--x--x\n\
+            |           |           |\n\
+            x           x           x\n\
+            |           |           |\n\
+            ^v          ~v          r\n\
+            |           |           |\n\
+            x           x           x\n\
+            |           |           |\n\
+            x--x--x--x--x--x--x--x--x\n\
+            .           |            \n\
+            .           x            \
+            ",
+            cars: vec![
+                elem::Car::new(4, 8, elem::Color::Red),
+            ],
+        },
+        Scenario {
+            map: "\
+            x--r--^p-x--R\n\
+            .            \n\
+            x--b--#p-x--B\n\
+            ",
+            cars: vec![
+                elem::Car::new(0, 1, elem::Color::Blue),
+                elem::Car::new(0, 0, elem::Color::Red),
+            ],
+        },
+        Scenario {
+            map: "\
+            x--r--^p-x--^o-vp-x--#p-~o-x--x--R\
+            ",
+            cars: vec![
+                elem::Car::new(0, 0, elem::Color::Red),
+            ],
+        },
     ];
 
     for scenario in scenarii {
