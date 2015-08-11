@@ -13,11 +13,11 @@ pub enum Color {
 impl Color {
     pub fn colorize(&self, s: &str) -> String {
         format!("{}{}\x1b[0m", match *self {
-           Color::Red     => "\x1b[31m",
-           Color::Green   => "\x1b[32m",
-           Color::Blue    => "\x1b[34m",
-           Color::Yellow  => "\x1b[33m",
-           Color::White   => "\x1b[90m",
+           Color::Red     => "\x1b[38;5;9m",
+           Color::Green   => "\x1b[38;5;10m",
+           Color::Blue    => "\x1b[38;5;4m",
+           Color::Yellow  => "\x1b[38;5;11m",
+           Color::White   => "\x1b[38;5;234m",
         }, s)
     }
 }
