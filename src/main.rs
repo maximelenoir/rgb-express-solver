@@ -8,7 +8,50 @@ struct Scenario {
     cars: Vec<elem::Car>,
 }
 
+struct Symbology {
+    input: char,
+    extra: char,
+    help: &'static str,
+}
+
 fn main() {
+    println!("SYMBOLOGY:");
+    for sym in vec![
+        Symbology{input: 'x', extra: ' ', help: "road"},
+        Symbology{input: 'r', extra: ' ', help: "red cube"},
+        Symbology{input: 'g', extra: ' ', help: "green cube"},
+        Symbology{input: 'b', extra: ' ', help: "blue cube"},
+        Symbology{input: 'y', extra: ' ', help: "yellow cube"},
+        Symbology{input: 'R', extra: ' ', help: "red house"},
+        Symbology{input: 'G', extra: ' ', help: "green house"},
+        Symbology{input: 'B', extra: ' ', help: "blue house"},
+        Symbology{input: 'Y', extra: ' ', help: "yellow house"},
+        Symbology{input: 'v', extra: 'p', help: "pink down button"},
+        Symbology{input: '^', extra: 'p', help: "pink up button"},
+        Symbology{input: '~', extra: 'p', help: "pink open brige"},
+        Symbology{input: '#', extra: 'p', help: "pink closed button"},
+        Symbology{input: 'v', extra: 'v', help: "violet down button"},
+        Symbology{input: '^', extra: 'v', help: "violet up button"},
+        Symbology{input: '~', extra: 'v', help: "violet open brige"},
+        Symbology{input: '#', extra: 'v', help: "violet closed button"},
+        Symbology{input: 'v', extra: 'o', help: "orange down button"},
+        Symbology{input: '^', extra: 'o', help: "orange up button"},
+        Symbology{input: '~', extra: 'o', help: "orange open brige"},
+        Symbology{input: '#', extra: 'o', help: "orange closed button"},
+        Symbology{input: 'v', extra: 'c', help: "cream down button"},
+        Symbology{input: '^', extra: 'c', help: "cream up button"},
+        Symbology{input: '~', extra: 'c', help: "cream open brige"},
+        Symbology{input: '#', extra: 'c', help: "cream closed button"},
+    ] {
+        println!("{}{} => {}: {}",
+                    sym.input,
+                    sym.extra,
+                    elem::Elem::from_char(sym.input, sym.extra),
+                    sym.help,
+                );
+    }
+    println!("\n\n");
+
     let scenarii = vec![
         Scenario {
             map: "\
