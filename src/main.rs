@@ -293,6 +293,34 @@ fn main() {
                 elem::Car::new(0, 0, elem::Color::Red),
             ],
         },
+        Scenario {
+            map: "\
+            x--vo-x--x--x     x--x--x--x--x \n\
+            |     |     |     |           | \n\
+            x     y     x--#o-x           x \n\
+            |     |     |     |           | \n\
+            x--^o-x--x--x     x--x--G--x--x \n\
+            |     |     |     |     |     | \n\
+            ~o    ~o    ~o    ~v    ~o    ~v\n\
+            |     |     |     |     |     | \n\
+            x--^o-x--^o-x     x     x--vv-x \n\
+            |     |     |     |     |     | \n\
+            x     x     x--~o-x     ^o    g \n\
+            |     |     |     |     |     | \n\
+            x--Y--^o-x--x     x--x--r--x--x \n\
+            |     |     |     |     |     | \n\
+            #v    ~o    ~v    ~v    #o    #v \n\
+            |     |     |     |     |     | \n\
+            x--^v-x--x--x     x--x--x--x--x \n\
+            |     |     |     |           | \n\
+            x     x     x--~o-x           x \n\
+            |     |     |     |           | \n\
+            x--x--x--vv-x     x--x--R--x--x \
+            ",
+            cars: vec![
+                elem::Car::new(2, 9, elem::Color::White),
+            ],
+        },
     ];
 
     for scenario in scenarii {
