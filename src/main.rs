@@ -333,11 +333,38 @@ fn main() {
             map.output_solution(&solution, &scenario.cars);
             for (i, car) in scenario.cars.iter().enumerate() {
                 let car_moves: Vec<Option<elem::Dir>> = solution.iter().map(|moves| moves[i]).collect();
-                println!("{} ({}, {}): {:?}", car, car.coord.0, car.coord.1, car_moves); 
+                let car_moves = group(car_moves);
+                println!("{} ({}, {}): {}",
+                    car, car.coord.0, car.coord.1,
+                    car_moves.into_iter()
+                              .filter(|&(dir, _)| dir.is_some())
+                              .map(|(dir, n)| format!("{}{}", n, dir.unwrap()))
+                              .fold("".to_string(), |s, d| format!("{}{} ", s, d)),
+                );
             }
         } else {
             println!("NO SOLUTION FOUND");
         }
         println!("\n\n\n");
     }
+}
+
+fn group<T: Eq + Copy>(v: Vec<T>) -> Vec<(T, usize)> {
+    let mut r = vec![];
+    if v.len() == 0 {
+        return r;
+    }
+
+    let mut last = v.get(0).unwrap();
+    let mut n = 1;
+    for x in v.iter().skip(1) {
+        if *x != *last {
+            r.push((*last, n));
+            n = 0;
+            last = x;
+        }
+        n += 1;
+    }
+    r.push((*last, n));
+    r
 }

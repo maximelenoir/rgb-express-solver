@@ -147,7 +147,7 @@ impl fmt::Display for Elem {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum Dir {
     Up = 0,
     Right,
