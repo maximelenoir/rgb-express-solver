@@ -17,6 +17,7 @@ impl fmt::Display for State {
 
 pub struct Solver {
     states: Vec<State>,
+    targets: Vec<Vec<bool>>,
     dirs: Vec<Vec<Option<elem::Dir>>>,
 }
 
@@ -26,6 +27,7 @@ impl Solver {
             panic!("car {} is misplaced ({}, {})", car, car.coord.0, car.coord.1);
         }
         Solver {
+            targets: gen_onoff(m.iter().filter(|&elem| match elem.typ { elem::Type::DropOff => true, _ => false }).count()),
             dirs: gen_dirs(cars.len()),
             states: vec![State{
                 from: vec![],
@@ -35,7 +37,26 @@ impl Solver {
         }
     }
 
-    pub fn solve(&mut self) -> Option<Vec<Vec<Option<elem::Dir>>>> {
+    pub fn solve(&mut self) -> Option<Solution> {
+        // Try all combination of targets.
+        for targets in self.targets.to_vec() {
+            self.states.get_mut(0).unwrap().map.iter_mut()
+                                      .filter(|elem| match elem.typ { elem::Type::DropOff => true, _ => false })
+                                      .zip(&targets)
+                                      .map(|(e, &is_on)| { if is_on { e.typ = elem::Type::DropOn; } e })
+                                      .count();
+            let res = self.solve_inner();
+            if let Some(dirs) = res {
+                return Some(Solution {
+                    dirs: dirs,
+                    targets: targets,
+                });
+            }
+        }
+        None
+    }
+
+    fn solve_inner(&mut self) -> Option<Vec<Vec<Option<elem::Dir>>>> {
         let dirs = self.dirs.to_vec(); // avoid borrow
         loop {
             for moves in dirs.iter() {
@@ -48,7 +69,7 @@ impl Solver {
                     return Some(vec![moves.to_vec()]);
                 }
                 // Solve recursively.
-                if let Some(res) = self.solve() {
+                if let Some(res) = self.solve_inner() {
                     // If a solution has been found, return.
                     let mut s = vec![moves.to_vec()];
                     s.extend(res.into_iter());
@@ -103,6 +124,11 @@ impl Solver {
     }
 }
 
+pub struct Solution {
+    pub dirs: Vec<Vec<Option<elem::Dir>>>,
+    pub targets: Vec<bool>,
+}
+
 /// Generate all possible directions given a number of cars.
 /// e.g. gen_dirs(1) => [[Up], [Right], [Down], [Left]]
 fn gen_dirs(n: usize) -> Vec<Vec<Option<elem::Dir>>> {
@@ -131,6 +157,24 @@ fn gen_dirs_inner(n: usize) -> Vec<Vec<Option<elem::Dir>>> {
                 c.push(*dir);
                 v.push(c);
             }
+        }
+    }
+    v
+}
+
+fn gen_onoff(n: usize) -> Vec<Vec<bool>> {
+    let mut v: Vec<Vec<_>> = vec![];
+    if n == 0 {
+        return vec![vec![]];
+    } else {
+        let onoffs_n1 = gen_onoff(n-1);
+        for onoff_n1 in onoffs_n1 {
+            let mut c = onoff_n1.to_vec();
+            c.push(false);
+            v.push(c);
+            let mut c = onoff_n1.to_vec();
+            c.push(true);
+            v.push(c);
         }
     }
     v

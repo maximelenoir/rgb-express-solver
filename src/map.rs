@@ -1,5 +1,6 @@
 use ::vec2d;
 use ::elem;
+use ::solver;
 use std::fmt;
 use std::result;
 use std::collections::HashMap;
@@ -78,6 +79,16 @@ impl Map {
         match self[car.coord].typ {
             elem::Type::Empty => return false, // should not happen
             elem::Type::Road => return true,
+            elem::Type::DropOff => return true,
+            elem::Type::DropOn => {
+                self[car.coord].typ = elem::Type::DropOff;
+                if let Some(&e @ elem::Type::Cube(..)) = car.cubes.last() {
+                    // Drop the box on the ground
+                    self[car.coord].typ = e;
+                    car.cubes.pop();
+                }
+                return true;
+            },
             elem::Type::PushedButton(_) => return true,
             elem::Type::ArmedButton(c) => {
                 for x in self.iter_mut() {
@@ -108,7 +119,7 @@ impl Map {
                 }
                 return false;
             },
-            elem::Type::Cube(c) if (c == car.color || car.color == elem::Color::White) && car.cubes.len() < 3 => {
+            elem::Type::Cube(..) if car.cubes.len() < 3 => {
                 // Steal the cube
                 car.cubes.push(self[car.coord].typ);
                 self[car.coord].typ = elem::Type::Road;
@@ -128,13 +139,20 @@ impl Map {
         return true;
     }
 
-    pub fn output_solution(&self, solution: &Vec<Vec<Option<elem::Dir>>>, cars: &Vec<elem::Car>) {
+    pub fn output_solution(&mut self, solution: &solver::Solution, cars: &Vec<elem::Car>) {
         let mut cars = cars.clone();
+
+        self.iter_mut().filter(|e| {
+            match e.typ {
+                elem::Type::DropOn | elem::Type::DropOff => true,
+                _ => false,
+            }
+        }).zip(&solution.targets).map(|(e, &is_on)| { if is_on { e.typ = elem::Type::DropOn; } e }).count();
 
         let mut rights: HashMap<(usize, usize), elem::Color> = HashMap::new();
         let mut downs: HashMap<(usize, usize), elem::Color> = HashMap::new();
         for (i, car) in cars.iter_mut().enumerate() {
-            for dir in solution.iter().map(|moves| moves[i]) {
+            for dir in solution.dirs.iter().map(|moves| moves[i]) {
                 if dir.is_none() {
                     continue;
                 }

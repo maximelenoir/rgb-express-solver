@@ -18,6 +18,7 @@ fn main() {
     println!("SYMBOLOGY:");
     for sym in vec![
         Symbology{input: 'x', extra: ' ', help: "road"},
+        Symbology{input: 'O', extra: ' ', help: "drop target"},
         Symbology{input: 'r', extra: ' ', help: "red cube"},
         Symbology{input: 'g', extra: ' ', help: "green cube"},
         Symbology{input: 'b', extra: ' ', help: "blue cube"},
@@ -321,18 +322,62 @@ fn main() {
                 elem::Car::new(2, 9, elem::Color::White),
             ],
         },
+        Scenario {
+            map: "\
+            .        x--x--x     x--x\n\
+            .        |     |     |  |\n\
+            x--r--b--x  B--O--x  x  x\n\
+            .        |     |  |  |  |\n\
+            .        R--x--x  x--x  x\
+            ",
+            cars: vec![
+                elem::Car::new(0, 1, elem::Color::Red),
+                elem::Car::new(8, 2, elem::Color::Blue),
+            ],
+        },
+        Scenario {
+            map: "\
+            x                             x\n\
+            |                             |\n\
+            y                             r\n\
+            |                             |\n\
+            x     R--x--G--x--B--x--Y     x\n\
+            |     |  |  |  |  |  |  |     |\n\
+            x     x--O--O--O--O--O--x     x\n\
+            |     |  |  |  |  |  |  |     |\n\
+            x--x--O--O--O--O--O--O--O--x--x\n\
+            |  |  |  |  |  |  |  |  |  |  |\n\
+            x--O--O--O--O--O--O--O--O--O--x\n\
+            |  |  |  |  |  |  |  |  |  |  |\n\
+            x--x--O--O--O--O--O--O--O--x--x\n\
+            |     |  |  |  |  |  |  |     |\n\
+            x     x--O--O--O--O--O--x     x\n\
+            |     |  |  |  |  |  |  |     |\n\
+            x     x--x--x--x--x--x--x     x\n\
+            |                             |\n\
+            b                             g\n\
+            |                             |\n\
+            x                             x\
+            ",
+            cars: vec![
+                elem::Car::new(0, 0, elem::Color::Red),
+                elem::Car::new(0, 10, elem::Color::Green),
+                elem::Car::new(10, 0, elem::Color::Yellow),
+                elem::Car::new(10, 10, elem::Color::Blue),
+            ],
+        },
     ];
 
     for scenario in scenarii {
         let m = map::Map::from_str(scenario.map);
-        let map = m.clone();
+        let mut map = m.clone();
         println!("INPUT:\n{}", m);
         let mut s = solver::Solver::new(m, scenario.cars.to_vec());
         if let Option::Some(solution) = s.solve() {
             println!("SOLUTION FOUND:");
             map.output_solution(&solution, &scenario.cars);
             for (i, car) in scenario.cars.iter().enumerate() {
-                let car_moves: Vec<Option<elem::Dir>> = solution.iter().map(|moves| moves[i]).collect();
+                let car_moves: Vec<Option<elem::Dir>> = solution.dirs.iter().map(|moves| moves[i]).collect();
                 let car_moves = group(car_moves);
                 println!("{} ({}, {}): {}",
                     car, car.coord.0, car.coord.1,

@@ -49,6 +49,8 @@ impl Color {
 pub enum Type {
     Empty,
     Road,
+    DropOn,
+    DropOff,
     PushedButton(Color),
     ArmedButton(Color),
     OpenBridge(Color),
@@ -103,6 +105,7 @@ impl Elem {
             conn: [false; 4],
             typ: match c {
                 'x' => Type::Road,
+                'O' => Type::DropOff,
                 'r' => Type::Cube(Color::Red),
                 'R' => Type::House(Color::Red),
                 'g' => Type::Cube(Color::Green),
@@ -136,6 +139,8 @@ impl fmt::Display for Elem {
         write!(fmt, "{}", match self.typ {
             Type::Empty           => " ".to_string(),
             Type::Road            => "x".to_string(),
+            Type::DropOn          => Color::Yellow.colorize("🞋"),
+            Type::DropOff         => "🞋".to_string(),
             Type::PushedButton(c) => c.colorize("🔳"),
             Type::ArmedButton(c)  => c.colorize("🔲"),
             Type::OpenBridge(c)   => c.colorize("≋"),
