@@ -38,9 +38,7 @@ impl Solver {
     pub fn solve(&mut self) -> Option<Vec<Vec<Option<elem::Dir>>>> {
         let dirs = self.dirs.to_vec(); // avoid borrow
         loop {
-            //DEBUG:println!("state:\n{}", self.states.last().unwrap().map);
             for moves in dirs.iter() {
-                //DEBUG:println!("trying {:?}", moves);
                 // Try to move. Update states on success.
                 // Return false on failure.
                 if !self.push(moves) {
@@ -101,7 +99,6 @@ impl Solver {
     }
 
     fn pop(&mut self) {
-        //DEBUG:println!("rollback");
         self.states.pop();
     }
 }
